@@ -1,7 +1,7 @@
 import View from './view.js';
 
 import icons from 'url:../../img/icons.svg';
-import { IMAGE_URL } from '../config.js';
+
 class Resultsview extends View {
   _parentElement = document.querySelector('.results');
   _errorMessage = `No Recipe Available for Search Query!! Please Try Again`;
@@ -15,7 +15,7 @@ class Resultsview extends View {
     return ` <li class="preview">
     <a class="preview__link" href="#${res.id}">
       <figure class="preview__fig">
-        <img src="${IMAGE_URL}" alt="Test" />
+        <img src="${res.image}" alt="Test" />
       </figure>
       <div class="preview__data">
         <h4 class="preview__title">${res.title}</h4>
