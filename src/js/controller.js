@@ -10,6 +10,7 @@ import paginationView from './view/paginationView.js';
 if (module.hot) {
   module.hot.accept();
 } // code for hot module replacement by parcel
+
 // https://forkify-api.herokuapp.com/v2
 console.log('Script Loaded');
 ///////////////////////////////////////
@@ -18,9 +19,12 @@ const controlRecipe = async function () {
   const id = window.location.hash.slice(1);
 
   if (!id) return;
-  recipeView.renderSpinner();
+
+  // 0. Update results view to mark selected search result
+  resultView.render(model.getSearchResultsPage());
   try {
     // 1) Loading Recipe
+    recipeView.renderSpinner();
     await model.loadRecipe(id);
     const { recipe } = model.state;
 
@@ -60,9 +64,21 @@ const controlPagination = function (goToPage) {
   paginationView.render(model.state.search);
   console.log(goToPage);
 };
+
+const controlServings = function (newServings) {
+  //Update the recipe servings(in state)
+  model.updateServings(newServings);
+
+  //Update the recipeView
+  //recipeView.render(model.state.recipe); - renders entire recipe view(stress on browser 😀 😂)
+  recipeView.update(model.state.recipe);
+};
+
 const subscriber = function () {
   recipeView.publishHandlerRender(controlRecipe);
+  recipeView.publishHandlerUpdateServing(controlServings);
   searchView.publishHandlerSearch(controlSearchResults);
   paginationView.publishHandlerClick(controlPagination);
+  window.location.hash = '';
 };
 subscriber();
