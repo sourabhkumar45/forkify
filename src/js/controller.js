@@ -1,15 +1,17 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { async } from 'regenerator-runtime/runtime';
+
 import * as model from './model.js';
 import recipeView from './view/recipeViews.js';
 import searchView from './view/searchView.js';
+import bookmarkView from './view/bookmarkView.js';
 import resultView from './view/resultsView.js';
 import paginationView from './view/paginationView.js';
 
-if (module.hot) {
-  module.hot.accept();
-} // code for hot module replacement by parcel
+// if (module.hot) {
+//   module.hot.accept();
+//} // code for hot module replacement by parcel
 
 // https://forkify-api.herokuapp.com/v2
 console.log('Script Loaded');
@@ -22,6 +24,7 @@ const controlRecipe = async function () {
 
   // 0. Update results view to mark selected search result
   resultView.update(model.getSearchResultsPage());
+  bookmarkView.update(model.state.bookMarks);
   try {
     // 1) Loading Recipe
     recipeView.renderSpinner();
@@ -74,10 +77,28 @@ const controlServings = function (newServings) {
   recipeView.update(model.state.recipe);
 };
 
+const controlAddBookmark = function () {
+  //1) Add/Remove bookmark
+  if (!model.state.recipe.bookMarked) model.addBookMark(model.state.recipe);
+  else model.removeBookMark(model.state.recipe.id);
+
+  //2) update the recipe view
+  recipeView.update(model.state.recipe);
+
+  //3) render Bookmark list
+  bookmarkView.render(model.state.bookMarks);
+};
+
+const controlPrevBookmarks = function () {
+  bookmarkView.render(model.state.bookMarks);
+};
+
 const subscriber = function () {
+  bookmarkView.publishHandlerBookmark(controlPrevBookmarks);
   recipeView.publishHandlerRender(controlRecipe);
   recipeView.publishHandlerUpdateServing(controlServings);
   searchView.publishHandlerSearch(controlSearchResults);
   paginationView.publishHandlerClick(controlPagination);
+  recipeView.publishHandlerAddBookMark(controlAddBookmark);
 };
 subscriber();
