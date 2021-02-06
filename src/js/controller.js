@@ -21,7 +21,7 @@ const controlRecipe = async function () {
   if (!id) return;
 
   // 0. Update results view to mark selected search result
-  resultView.render(model.getSearchResultsPage());
+  resultView.update(model.getSearchResultsPage());
   try {
     // 1) Loading Recipe
     recipeView.renderSpinner();
@@ -79,6 +79,5 @@ const subscriber = function () {
   recipeView.publishHandlerUpdateServing(controlServings);
   searchView.publishHandlerSearch(controlSearchResults);
   paginationView.publishHandlerClick(controlPagination);
-  window.location.hash = '';
 };
 subscriber();
